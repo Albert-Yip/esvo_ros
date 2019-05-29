@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/include/eigen3",
+                "/home/albert/Lib_Docs/Sophus/",
+                "/home/albert/Lib_Docs/",
+                "/home/albert/Lib_Docs/rpg_vikit/vikit_common/include",
+                "/home/albert/Lib_Docs/fast/include",
+                "${workspaceFolder}/src/rpg_svo/svo/include",
+                "${workspaceFolder}/src/rpg_svo/svo_ros/include",
+                "/opt/ros/melodic/include",
+                "${workspaceFolder}/src/rpg_vikit/vikit_ros/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+        }
+    ],
+    "version": 4
+}
