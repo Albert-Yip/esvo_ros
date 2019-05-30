@@ -143,11 +143,11 @@ InitResult KltHomographyInit::addSecond_TFrame(FramePtr frame_cur)
   SVO_INFO_STREAM("Init: Epipolar RANSAC "<<inliers_.size()<<" inliers.");
   //triangulate all features and compute reprojection errors and inliers: output->inliers_, xyz_in_cur_, T_cur_from_ref_
 
-  if(inliers_.size() < Config::initMinInliers())
-  {
-    SVO_WARN_STREAM("Init WARNING: "<<Config::initMinInliers()<<" inliers minimum required.");
-    return FAILURE;
-  }
+  // if(inliers_.size() < Config::initMinInliers())
+  // {
+  //   SVO_WARN_STREAM("Init WARNING: "<<Config::initMinInliers()<<" inliers minimum required.");
+  //   return FAILURE;
+  // }
   // Rescale the map such that the mean scene depth is equal to the specified scale
   vector<double> depth_vec;
   for(size_t i=0; i<xyz_in_cur_.size(); ++i)

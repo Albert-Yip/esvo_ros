@@ -125,7 +125,7 @@ istream & VoNode::read_frame(istream &fin, vector<TrackedFeature> &feature_list,
             iss>>temp;
             if(temp!=timestamp)
             {
-                cout<<"ts="<<temp<<", timestamp is wrong!"<<endl;
+                cout<<"ts="<<temp<<", timestamp = "<<timestamp<<", x_ts is wrong!"<<endl;
                 // return 0;
             }
             while(iss>>temp_x)
@@ -143,7 +143,7 @@ istream & VoNode::read_frame(istream &fin, vector<TrackedFeature> &feature_list,
             iss>>temp;
             if(temp!=timestamp)
             {
-                cout<<"ts="<<temp<<", timestamp is wrong!"<<endl;
+                cout<<"ts="<<temp<<", timestamp = "<<timestamp<<", y_ts is wrong!"<<endl;
                 // return 0;
             }
             while(iss>>temp_y)
@@ -161,10 +161,10 @@ void VoNode::runFromTrackingResult()
 {
   //Read frame
   // ifstream fin("/home/albert/workSpace/data/output_result_day_200_f.txt");
-  ifstream fin("/home/albert/workSpace/data/outdoors_night_result.txt");
+  ifstream fin("/home/albert/workSpace/data/outdoors_night_result_f.txt");
   vector<TrackedFeature> feature_list;
   double timestamp = -1.0;
-  ros::Rate loop_rate(5);
+  ros::Rate loop_rate(10);
   while(read_frame(fin, feature_list, timestamp))
   {
     // cout<<"\nResult "<<":\n";
@@ -205,7 +205,7 @@ void VoNode::runFromTrackingResult()
       // access the pose of the camera via vo_->lastFrame()->T_f_w_.
     }
     // ros::spinOnce();
-    loop_rate.sleep();
+    // loop_rate.sleep();
   }
 }
 
