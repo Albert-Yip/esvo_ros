@@ -139,16 +139,16 @@ void Frame::checkKeyPoints(Feature* ftr)
 void Frame::removeKeyPoint(Feature* ftr)
 {
   bool found = false;
-  if(key_pts_.size()!=0)
+  if(key_pts_.size() == 5)
   {
     std::for_each(key_pts_.begin(), key_pts_.end(), [&](Feature*& i){
-      if(i == ftr) {//Seg fault
+      if(i == ftr) {
         i = NULL;
         found = true;
       }
     });
   }
-
+  
   if(found)
     setKeyPoints();
 }

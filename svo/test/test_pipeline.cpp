@@ -47,12 +47,14 @@ public:
 
 BenchmarkNode::BenchmarkNode()
 {
-  cam_ = new vk::PinholeCamera(346, 260, 194.8, 194.8, 170.2, 127.0);
+  cam_ = new vk::PinholeCamera(346, 260, 223.994001, 223.617834, 170.768432, 128.187118);
   // //   projection_matrix:
   // - [194.8389461655774, 0.0, 170.20896993269332, 0.0]
   // - [0.0, 194.8389461655774, 127.00404928416845, 0.0]
   // - [0.0, 0.0, 1.0, 0.0]
   // //  resolution: [346, 260]
+  // //  intrinsics: [223.9940010790056, 223.61783486959376, 170.7684322973841, 128.18711828338436]
+  // //  distortion_coeffs: [-0.033904378348448685, -0.01537260902537579, -0.022284741346941413,    0.0069204143687187645]
   vo_ = new svo::FrameHandlerMono(cam_);
   vo_->start();
 }
@@ -127,8 +129,8 @@ istream & BenchmarkNode::read_frame(istream &fin, vector<TrackedFeature> &featur
 void BenchmarkNode::runFromTrackingResult()
 {
   //Read frame
-  ifstream fin("/home/albert/workSpace/data/output_result_day_200_f.txt");
-  // ifstream fin("/home/albert/workSpace/data/outdoors_night_result.txt");
+  // ifstream fin("/home/albert/workSpace/data/output_result_day_200_f.txt");
+  ifstream fin("/home/albert/workSpace/data/outdoors_night_result.txt");
   vector<TrackedFeature> feature_list;
   double timestamp = -1.0;
   while(read_frame(fin, feature_list, timestamp))
