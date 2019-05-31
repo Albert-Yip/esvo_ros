@@ -42,7 +42,7 @@ Config::Config() :
     structureoptim_num_iter(vk::getParam<int>("svo/structureoptim_num_iter", 5)),
     loba_thresh(vk::getParam<double>("svo/loba_thresh", 2.0)),
     loba_robust_huber_width(vk::getParam<double>("svo/loba_robust_huber_width", 1.0)),
-    loba_num_iter(vk::getParam<int>("svo/loba_num_iter", 0)),
+    loba_num_iter(vk::getParam<int>("svo/loba_num_iter", 1)),
     kfselect_mindist(vk::getParam<double>("svo/kfselect_mindist", 0.12)),
     triang_min_corner_score(vk::getParam<double>("svo/triang_min_corner_score", 20.0)),
     triang_half_patch_size(vk::getParam<int>("svo/triang_half_patch_size", 4)),
@@ -57,7 +57,7 @@ Config::Config() :
     trace_dir("/tmp"),
     n_pyr_levels(3),
     use_imu(false),
-    core_n_kfs(3),
+    core_n_kfs(2),//orig:3
     map_scale(3.0),//NOTE:ori 1.0
     grid_size(25),
     init_min_disparity(50.0),

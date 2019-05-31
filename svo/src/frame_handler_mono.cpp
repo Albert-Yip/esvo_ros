@@ -455,7 +455,9 @@ FrameHandlerMono::UpdateResult FrameHandlerMono::process_TFrame()
   if(Config::lobaNumIter() > 0)
   {
     SVO_START_TIMER("local_ba");
-    setCoreKfs(Config::coreNKfs());
+    // setCoreKfs(Config::coreNKfs());
+    core_kfs_.insert(last_frame_);
+    core_kfs_.insert(new_frame_);
     size_t loba_n_erredges_init, loba_n_erredges_fin;
     double loba_err_init, loba_err_fin;
     ba::localBA(new_frame_.get(), &core_kfs_, &map_,

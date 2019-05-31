@@ -162,9 +162,10 @@ void VoNode::runFromTrackingResult()
   //Read frame
   // ifstream fin("/home/albert/workSpace/data/output_result_day_200_f.txt");
   ifstream fin("/home/albert/workSpace/data/outdoors_night_result_f.txt");
+  // ifstream fin("/home/albert/workSpace/data/outdoors_day_new_result.txt");
   vector<TrackedFeature> feature_list;
   double timestamp = -1.0;
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(1);
   while(read_frame(fin, feature_list, timestamp))
   {
     // cout<<"\nResult "<<":\n";
@@ -200,12 +201,13 @@ void VoNode::runFromTrackingResult()
     {
       std::cout << "Frame-Id: " << vo_->lastFrame()->id_ << " \t"
                   << "#Features: " << vo_->lastNumObservations() << " \t"
-                  << "Proc. Time: " << vo_->lastProcessingTime()*1000 << "ms \n" << std::endl;
+                  << "Proc. Time: " << vo_->lastProcessingTime()*1000 << "ms    ts = " <<
+                  vo_->lastFrame()->timestamp_<<"\n"<< std::endl;
 
       // access the pose of the camera via vo_->lastFrame()->T_f_w_.
     }
     // ros::spinOnce();
-    // loop_rate.sleep();
+    loop_rate.sleep();
   }
 }
 
