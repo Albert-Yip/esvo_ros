@@ -457,7 +457,7 @@ FrameHandlerMono::UpdateResult FrameHandlerMono::process_TFrame()
     SVO_START_TIMER("local_ba");
     // setCoreKfs(Config::coreNKfs());
     core_kfs_.insert(last_frame_);
-    core_kfs_.insert(new_frame_);
+    // core_kfs_.insert(new_frame_);
     size_t loba_n_erredges_init, loba_n_erredges_fin;
     double loba_err_init, loba_err_fin;
     ba::localBA(new_frame_.get(), &core_kfs_, &map_,
@@ -475,12 +475,12 @@ FrameHandlerMono::UpdateResult FrameHandlerMono::process_TFrame()
   //注意只在插入新的关键帧时会做feature detect，普通帧靠 光流跟踪（pose） 和 极线搜索(Depth Filter)
 
   // if limited number of keyframes, remove the one furthest apart
-  if(Config::maxNKfs() > 2 && map_.size() >= Config::maxNKfs())
-  {
-    FramePtr furthest_frame = map_.getFurthestKeyframe(new_frame_->pos());
-    depth_filter_->removeKeyframe(furthest_frame); // TODO this interrupts the mapper thread, maybe we can solve this better
-    map_.safeDeleteFrame(furthest_frame);
-  }
+  // if(Config::maxNKfs() > 2 && map_.size() >= Config::maxNKfs())
+  // {
+  //   FramePtr furthest_frame = map_.getFurthestKeyframe(new_frame_->pos());
+  //   depth_filter_->removeKeyframe(furthest_frame); // TODO this interrupts the mapper thread, maybe we can solve this better
+  //   map_.safeDeleteFrame(furthest_frame);
+  // }
 
   // add keyframe to map
   map_.addKeyframe(new_frame_);

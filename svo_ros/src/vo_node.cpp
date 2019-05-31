@@ -165,7 +165,7 @@ void VoNode::runFromTrackingResult()
   // ifstream fin("/home/albert/workSpace/data/outdoors_day_new_result.txt");
   vector<TrackedFeature> feature_list;
   double timestamp = -1.0;
-  ros::Rate loop_rate(1);
+  ros::Rate loop_rate(10);
   while(read_frame(fin, feature_list, timestamp))
   {
     // cout<<"\nResult "<<":\n";
