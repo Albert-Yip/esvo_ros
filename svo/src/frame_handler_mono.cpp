@@ -407,7 +407,7 @@ FrameHandlerMono::UpdateResult FrameHandlerMono::process_TFrame()
   size_t sfba_n_edges_final;
   double sfba_thresh, sfba_error_init, sfba_error_final;
   pose_optimizer::optimizeGaussNewton(
-      Config::poseOptimThresh(), Config::poseOptimNumIter(), true,
+      Config::poseOptimThresh(), Config::poseOptimNumIter(), false,
       new_frame_, sfba_thresh, sfba_error_init, sfba_error_final, sfba_n_edges_final);//NOTE: 第三步pose optimization
   SVO_STOP_TIMER("pose_optimizer");
   SVO_LOG4(sfba_thresh, sfba_error_init, sfba_error_final, sfba_n_edges_final);

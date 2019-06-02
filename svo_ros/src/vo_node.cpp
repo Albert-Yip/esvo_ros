@@ -34,6 +34,10 @@
 #include <vikit/abstract_camera.h>
 #include <vikit/camera_loader.h>
 #include <vikit/user_input_thread.h>
+#include <fstream>
+#include <nav_msgs/Path.h>
+#include <geometry_msgs/Quaternion.h>
+#include <geometry_msgs/PoseStamped.h>
 
 namespace svo {
 
@@ -47,6 +51,8 @@ public:
   bool publish_dense_input_;
   boost::shared_ptr<vk::UserInputThread> user_input_thread_;
   ros::Subscriber sub_remote_key_;
+  ros::Publisher result_path_pub_;
+  nav_msgs::Path path;
   std::string remote_input_;
   vk::AbstractCamera* cam_;
   bool quit_;
@@ -57,6 +63,7 @@ public:
   void remoteKeyCb(const std_msgs::StringConstPtr& key_input);
   void runFromTrackingResult();
   istream &read_frame(istream &fin, vector<TrackedFeature> &feature_list, double &timestamp);
+  // vector< vector<int> > fts_counter;
 };
 
 VoNode::VoNode() :
@@ -77,7 +84,7 @@ VoNode::VoNode() :
 
   // Get initial position and orientation
   visualizer_.T_world_from_vision_ = Sophus::SE3(
-      vk::rpy2dcm(Vector3d(vk::getParam<double>("svo/init_rx", 1.5708),
+      vk::rpy2dcm(Vector3d(vk::getParam<double>("svo/init_rx", 0.0),
                            vk::getParam<double>("svo/init_ry", 0.0),
                            vk::getParam<double>("svo/init_rz", 0.0))),
       Eigen::Vector3d(vk::getParam<double>("svo/init_tx", 0.0),
@@ -115,6 +122,11 @@ istream & VoNode::read_frame(istream &fin, vector<TrackedFeature> &feature_list,
             {
                 // iss>>temp_Feature.id;
                 feature_list.push_back(temp_Feature);
+
+              // if(fts_counter!=NULL)
+              // {
+
+              // }
             }
         }
         else if(line_counter%3 == 1)//x row
@@ -163,6 +175,7 @@ void VoNode::runFromTrackingResult()
   // ifstream fin("/home/albert/workSpace/data/output_result_day_200_f.txt");
   ifstream fin("/home/albert/workSpace/data/outdoors_night_result_f.txt");
   // ifstream fin("/home/albert/workSpace/data/outdoors_day_new_result.txt");
+  // ifstream fin("/home/albert/workSpace/data/outdoors_night_new_result.txt");
   vector<TrackedFeature> feature_list;
   double timestamp = -1.0;
   ros::Rate loop_rate(10);
@@ -201,10 +214,48 @@ void VoNode::runFromTrackingResult()
     {
       std::cout << "Frame-Id: " << vo_->lastFrame()->id_ << " \t"
                   << "#Features: " << vo_->lastNumObservations() << " \t"
-                  << "Proc. Time: " << vo_->lastProcessingTime()*1000 << "ms    ts = " <<
-                  vo_->lastFrame()->timestamp_<<"\n"<< std::endl;
+                  << "Proc. Time: " << vo_->lastProcessingTime()*1000 << "ms\n";
+      // std::cout <<"### Tracking Result ###  ts = " << vo_->lastFrame()->timestamp_
+      //           <<"\t(x,y,z) = ("<<vo_->lastFrame()->T_f_w_.translation().x<<","<<vo_->lastFrame()->T_f_w_.translation().y<<","<<vo_->lastFrame()->T_f_w_.translation().z<<""
+      //           <<"\t(w,x,y,z) = "<<vo_->lastFrame()->T_f_w_.unit_quaternion().w << "\n"<<std::endl;
+      std::cout <<"### Tracking Result ###  ts = " << vo_->lastFrame()->timestamp_
+                <<"\t(x,y,z) = "<<vo_->lastFrame()->T_f_w_.translation().transpose()
+                <<"\t(x,y,z,w) = "<<vo_->lastFrame()->T_f_w_.unit_quaternion().coeffs().transpose()<< "\n"<<std::endl;
 
+      // ofstream outfile;
+      // outfile.open("/home/albert/Documents/performance.txt",ios::out | ios::app);
+      // outfile << vo_->lastFrame()->timestamp_ <<" "<<vo_->lastFrame()->T_f_w_.translation().transpose()<<" "<<vo_->lastFrame()->T_f_w_.unit_quaternion().coeffs().transpose()<<std::endl;
+      // outfile.close();
       // access the pose of the camera via vo_->lastFrame()->T_f_w_.
+      
+      
+      path.header.stamp=ros::Time::now();
+      path.header.frame_id="world";
+
+      SE3 T_world_from_vision_(Matrix3d::Identity(), Vector3d::Zero());
+      SE3 T_world_from_cam(T_world_from_vision_*vo_->lastFrame()->T_f_w_.inverse());
+      Quaterniond q;
+      Vector3d p;
+      q = Quaterniond(T_world_from_cam.rotation_matrix()*T_world_from_vision_.rotation_matrix().transpose());
+      p = T_world_from_cam.translation();
+
+      // q = Quaterniond(T_cam_from_world.rotation_matrix());
+      // p = T_cam_from_world.translation();
+
+			geometry_msgs::PoseStamped this_pose_stamped;
+      this_pose_stamped.pose.position.x = p[0];
+      this_pose_stamped.pose.position.y = p[1];
+      this_pose_stamped.pose.position.z = p[2];
+      this_pose_stamped.pose.orientation.x = q.x();
+      this_pose_stamped.pose.orientation.y = q.y();
+      this_pose_stamped.pose.orientation.z = q.z();
+      this_pose_stamped.pose.orientation.w = q.w();
+
+			this_pose_stamped.header.stamp=ros::Time::now();;
+			this_pose_stamped.header.frame_id="world";
+
+			path.poses.push_back(this_pose_stamped);
+      result_path_pub_.publish(path);
     }
     // ros::spinOnce();
     loop_rate.sleep();
@@ -276,7 +327,7 @@ int main(int argc, char **argv)
   ros::NodeHandle nh;
   std::cout << "create vo_node" << std::endl;
   svo::VoNode vo_node;
-
+  vo_node.result_path_pub_ = nh.advertise<nav_msgs::Path>("result_path",1, true);
   vo_node.runFromTrackingResult();
 
   // // subscribe to cam msgs
